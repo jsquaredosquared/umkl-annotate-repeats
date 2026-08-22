@@ -1,0 +1,4 @@
+catalog: "resources/str_catalogs/catalog_strchive.cleaned.json"
+
+pathvars:
+  samples_dir: "/home/jj/Documents/2026/umkl-pd-sv-analysis/samples/KUL_FAM000017"

@@ -1,0 +1,12 @@
+import os
+
+
+include: "rules/annotate_strs.smk"
+
+
+rule all:
+    input:
+        collect(
+            "outputs/{SAMPLE}.repeats.annotated.pathogenic.tsv",
+            SAMPLE=os.listdir("KUL_FAM000017"),
+        ),

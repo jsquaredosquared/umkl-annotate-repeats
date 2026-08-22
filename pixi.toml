@@ -1,0 +1,12 @@
+[workspace]
+channels = ["conda-forge", "bioconda"]
+name = "repeats"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+vembrane = ">=2.6.0,<3"
+stranger = ">=0.10.2,<0.11"
+snakemake = ">=9.25.1,<10"

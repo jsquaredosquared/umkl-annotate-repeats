@@ -1,0 +1,10 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# inputs and outputs
+.snakemake/
+logs/
+samples/
+results/
+
