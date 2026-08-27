@@ -6,5 +6,6 @@
 .snakemake/
 logs/
 samples/
+resources/
 results/
 

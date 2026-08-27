@@ -3,24 +3,26 @@ configfile: "config/config.yaml"
 
 import os
 
-group = os.path.basename(config["pathvars"]["samples_dir"])
+batch = os.path.basename(config["pathvars"]["samples_dir"])
 
 
 rule all:
     input:
-        f"<results>/{group}.repeats.annotated.pathogenic.tsv",
+        f"<results>/{batch}.repeats.annotated.pathogenic.grouped.tsv",
 
 
 rule annotate_str_vcf:
     input:
         multiext(
-            "<samples_dir>/{sample}/{sample}.repeats.vcf", file=".gz", index=".gz.tbi"
+            "<samples_dir>/{sample}/{sample}.repeats.vcf",
+            file=".gz",
+            index=".gz.tbi",
         ),
         catalog=config["catalog"],
     output:
-        temp("<results>/{sample}.repeats.annotated.vcf"),
+        temp("<results>/{batch}/{sample}/{sample}.repeats.annotated.vcf"),
     log:
-        "<logs>/annotate_str_vcf_{sample}.log",
+        "<logs>/{batch}/annotate_str_vcf_{sample}.log",
     conda:
         "../envs/str_analysis.yaml"
     shell:
@@ -29,11 +31,11 @@ rule annotate_str_vcf:
 
 rule filter_for_pathogenic_strs:
     input:
-        "<results>/{sample}.repeats.annotated.vcf",
+        "<results>/{batch}/{sample}/{sample}.repeats.annotated.vcf",
     output:
-        "<results>/{sample}.repeats.annotated.pathogenic.vcf",
+        "<results>/{batch}/{sample}/{sample}.repeats.annotated.pathogenic.vcf",
     log:
-        "<logs>/filter_for_pathogenic_strs_{sample}.log",
+        "<logs>/{batch}/filter_for_pathogenic_strs_{sample}.log",
     conda:
         "../envs/str_analysis.yaml"
     shell:
@@ -44,11 +46,11 @@ rule filter_for_pathogenic_strs:
 
 rule convert_vcf_to_table:
     input:
-        vcf="<results>/{sample}.repeats.annotated.pathogenic.vcf",
+        vcf="<results>/{batch}/{sample}/{sample}.repeats.annotated.pathogenic.vcf",
     output:
-        tsv="<results>/{sample}.repeats.annotated.pathogenic.tsv",
+        tsv="<results>/{batch}/{sample}/{sample}.repeats.annotated.pathogenic.tsv",
     log:
-        "<logs>/convert_vcf_to_table_{sample}.log",
+        "<logs>/{batch}/convert_vcf_to_table_{sample}.log",
     conda:
         "../envs/str_analysis.yaml"
     script:
@@ -58,13 +60,13 @@ rule convert_vcf_to_table:
 rule combine_tables:
     input:
         collect(
-            "<results>/{SAMPLE}.repeats.annotated.pathogenic.tsv",
+            "<results>/{{batch}}/{SAMPLE}/{SAMPLE}.repeats.annotated.pathogenic.tsv",
             SAMPLE=os.listdir(config["pathvars"]["samples_dir"]),
         ),
     output:
-        f"<results>/{group}.repeats.annotated.pathogenic.tsv",
+        "<results>/{batch}.repeats.annotated.pathogenic.grouped.tsv",
     log:
-        "<logs>/combine_tables.log",
+        "<logs>/{batch}/combine_tables.log",
     conda:
         "../envs/str_analysis.yaml"
     script:

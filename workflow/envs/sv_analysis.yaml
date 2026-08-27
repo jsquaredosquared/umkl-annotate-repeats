@@ -1,0 +1,10 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - annotsv
+  - bcftools
+  - bedtools
+  - survivor
+  - vembrane
+  - xonsh
