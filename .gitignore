@@ -6,6 +6,8 @@
 .snakemake/
 logs/
 samples/
-resources/
-!resources/str_catalogs/*
 results/
+
+!resources
+/resources/*
+!resources/str_catalogs
