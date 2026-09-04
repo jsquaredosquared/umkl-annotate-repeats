@@ -1,5 +1,5 @@
 # Path to JSON file which is compatible with `stranger`.
-catalog: "resources/str_catalogs/catalog_strchive.cleaned.json"
+catalog: "resources/str_catalogs/catalog.strchive.stripy_bounds.json"
 
 # Path to folder with samples.
 # Within this folder, there should be a folder for each sample.

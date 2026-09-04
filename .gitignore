@@ -7,5 +7,5 @@
 logs/
 samples/
 resources/
+!resources/str_catalogs/*
 results/
-
