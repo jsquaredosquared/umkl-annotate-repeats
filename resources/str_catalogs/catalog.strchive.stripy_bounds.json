@@ -1258,7 +1258,7 @@
     "Gene": "TCF4"
   },
   {
-    "LocusId": "THAP11",
+    "LocusId": "chr16_67842863_67842950",
     "ReferenceRegion": "chr16:67842862-67842950",
     "LocusStructure": "(CAG)*",
     "VariantType": "Repeat",
@@ -1381,7 +1381,7 @@
     "Gene": "YEATS2"
   },
   {
-    "LocusId": "ZFHX3",
+    "LocusId": "chr16_72787694_72787736",
     "ReferenceRegion": "chr16:72787694-72787758",
     "LocusStructure": "(CCG)*",
     "VariantType": "Repeat",
