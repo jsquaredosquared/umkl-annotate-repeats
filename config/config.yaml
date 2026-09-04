@@ -8,4 +8,4 @@ catalog: "resources/str_catalogs/catalog.strchive.stripy_bounds.json"
 samples_dir: "samples/KUL_FAM000017"
 
 # Path to the master key containing sample and family IDs, phenotypes, etc.
-master_key: "samples/UMKLM_KUL_master_key_n4530.tsv"
+master_key: "resources/UMKLM_KUL_UKM_r13_master_key_n6153_fin_20260902_01.tsv"
