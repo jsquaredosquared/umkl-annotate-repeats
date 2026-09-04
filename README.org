@@ -4,16 +4,16 @@
 
 2. Run the workflow from this directory. For example:
 
-   - If you are on the HPC, run the following command:
+- If you are on the HPC, run the following command:
 
-     #+begin_src shell
-     nohup snakemake --workflow-profile workflow/profiles/umhpc/ &
-     #+end_src
+  #+begin_src sh
+  nohup snakemake --workflow-profile workflow/profiles/umhpc/ &
+  #+end_src
 
-   - If you are on your own device, run the following command:
+- If you are on your own device, run the following command:
 
-     #+begin_src shell
-     snakemake -c 4 --sdm conda
-     #+end_src
+  #+begin_src sh
+  snakemake -c 4 --sdm conda
+  #+end_src
 
 The results of this workflow will be in a folder called ~results~.
