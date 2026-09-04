@@ -1,12 +1,88 @@
+configfile: "config/config.yaml"
+
+
 import os
 
-
-include: "rules/annotate_strs.smk"
+samples_dir = config["samples_dir"]
+batch = os.path.basename(samples_dir)
 
 
 rule all:
     input:
-        collect(
-            "outputs/{SAMPLE}.repeats.annotated.pathogenic.tsv",
-            SAMPLE=os.listdir("KUL_FAM000017"),
+        f"<results>/{batch}.repeats.annotated.gp2_pheno.tsv",
+
+
+rule annotate_str_vcf:
+    input:
+        multiext(
+            f"{samples_dir}/{{sample}}/{{sample}}.repeats.vcf",
+            file=".gz",
+            index=".gz.tbi",
         ),
+        catalog=config["catalog"],
+    output:
+        temp("<results>/{batch}/{sample}/{sample}.repeats.annotated.vcf"),
+    log:
+        "<logs>/{batch}/annotate_str_vcf_{sample}.log",
+    conda:
+        "envs/str_annotation.yaml"
+    shell:
+        "stranger -f {input.catalog} {input.file} > {output} 2> {log}"
+
+
+rule filter_for_pathogenic_strs:
+    input:
+        "<results>/{batch}/{sample}/{sample}.repeats.annotated.vcf",
+    output:
+        "<results>/{batch}/{sample}/{sample}.repeats.annotated.pathogenic.vcf",
+    log:
+        "<logs>/{batch}/filter_for_pathogenic_strs_{sample}.log",
+    conda:
+        "envs/str_annotation.yaml"
+    shell:
+        """
+        vembrane filter "'Disease' in INFO" {input} >{output} 2>{log}
+        """
+
+
+rule convert_vcf_to_table:
+    input:
+        vcf="<results>/{batch}/{sample}/{sample}.repeats.annotated.pathogenic.vcf",
+    output:
+        tsv="<results>/{batch}/{sample}/{sample}.repeats.annotated.pathogenic.tsv",
+    log:
+        "<logs>/{batch}/convert_vcf_to_table_{sample}.log",
+    conda:
+        "envs/str_annotation.yaml"
+    script:
+        "scripts/convert_str_vcf_to_table.xsh"
+
+
+rule combine_tables:
+    input:
+        collect(
+            f"<results>/{batch}/{{SAMPLE}}/{{SAMPLE}}.repeats.annotated.pathogenic.tsv",
+            SAMPLE=os.listdir(samples_dir),
+        ),
+    output:
+        "<results>/{batch}.repeats.annotated.pathogenic.tsv",
+    log:
+        "<logs>/{batch}/combine_tables.log",
+    conda:
+        "envs/str_annotation.yaml"
+    script:
+        "scripts/combine_str_tables.py"
+
+
+rule add_sample_info:
+    input:
+        annotations_table="<results>/{batch}.repeats.annotated.pathogenic.tsv",
+        master_key=config["master_key"],
+    output:
+        "<results>/{batch}.repeats.annotated.gp2_pheno.tsv",
+    log:
+        "<logs>/{batch}/add_sample_info.log",
+    conda:
+        "envs/str_annotation.yaml"
+    script:
+        "scripts/add_sample_info.py"

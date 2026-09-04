@@ -1,0 +1,8 @@
+executor: slurm
+sdm: conda
+jobs: 500
+
+default-resources:
+  runtime: 10
+  slurm_qos: short
+  slurm_partition: cpu-epyc,cpu-epyc-genoa
