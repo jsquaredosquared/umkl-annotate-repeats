@@ -14,7 +14,11 @@ rule unzip_sv_vcf:
     conda:
         "../envs/sv_analysis.yaml"
     shell:
-        "zcat {input} > {output}"
+        """
+        zcat {input} \
+        | bcftools annotate -x FORMAT - \
+        | vembrane filter --output {output} 'ALT != "." and "PASS" in FILTER and INFO["SVTYPE"] in ["DEL", "INS"] and "SVLEN" in INFO and abs(INFO["SVLEN"][0])<=1_000_000' -
+        """
 
 
 rule merge_sv_calls:
@@ -43,13 +47,10 @@ rule create_sv_bed_file:
         "<logs>/{batch}/create_sv_bed_file.log",
     conda:
         "../envs/sv_analysis.yaml"
-    params:
-        max_len=1_000_000,
     shell:
         """
         bcftools query \
-            -f '%CHROM\t%POS0\t%END\t%INFO/SVTYPE\t%ID' \
-            -i 'INFO/SVLEN<{params.max_len}' \
+            -f '%CHROM\t%POS0\t%END\t%INFO/SVTYPE\t%ID\t%INFO/SVLEN' \
             -o {output} {input} 2>{log}
         """
 
@@ -102,14 +103,14 @@ rule score_with_caddsv:
     input:
         bed=rules.create_caddsv_input.output,
     output:
-        "<results>/sv/caddsv_results/scored/{batch}.sv_score.tsv",
+        annotations="<results>/sv/caddsv_results/scored/{batch}.sv_score.tsv",
     log:
         "<logs>/{batch}/score_with_caddsv.log",
     conda:
         "../envs/caddsv.yaml"
     params:
         annotations_dir=config["pathvars"]["caddsv_dir"],
-        output_dir=subpath(output, ancestor=2),
+        output_dir=subpath(output.annotations, ancestor=2),
     shell:
         """
         caddsv run {input.bed} \
@@ -139,7 +140,7 @@ rule score_with_phenosv:
     input:
         bed=rules.create_phenosv_input.output,
     output:
-        "<results>/sv/phenosv_results/{batch}.sv_score.tsv",
+        annotations="<results>/sv/phenosv_results/{batch}.sv_score.tsv",
     log:
         "<logs>/{batch}/score_with_phenosv.log",
     conda:
@@ -149,7 +150,7 @@ rule score_with_phenosv:
         inference="full",
         inference_mode="tad",
         model="PhenoSV-light",
-        target_folder=subpath(output, parent=True),
+        target_folder=subpath(output.annotations, parent=True),
         hpo="HP:0001300",
     shell:
         """
@@ -161,6 +162,6 @@ rule score_with_phenosv:
             --HPO {params.hpo} \
             --sv_file {input.bed} \
             --target_folder {params.output_dir} \
-            --target_file_name {output} \
+            --target_file_name {output.annotations} \
             2>{log}
         """

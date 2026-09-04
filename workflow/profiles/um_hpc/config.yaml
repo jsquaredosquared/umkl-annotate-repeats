@@ -8,3 +8,9 @@ default-resources:
   slurm_qos: short
   slurm_partition: cpu-epyc,cpu-epyc-genoa
 
+set-resources:
+  unzip_sv_vcf:
+    runtime: 10
+  merge_sv_calls:
+    slurm_qos: normal
+    mem: "100GB"

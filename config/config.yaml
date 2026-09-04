@@ -1,7 +1,9 @@
-catalog: "resources/str_catalogs/catalog_strchive.cleaned.json"
+catalog: "resources/str_catalogs/catalog_strchive.cleaned.thap11_zfhx3.json"
 
 pathvars:
-  samples_dir: "/home/jj/Documents/2026/umkl-pd-sv-analysis/samples/KUL_FAM000017"
+  samples_dir: "samples/UMKL"
+  # samples_dir: "samples/KUL_FAM000017"
+  results: "thap11_zfhx3"
   annotsv_dir: "resources/AnnotSV"
   phenosv_dir: "resources/PhenoSV"
   caddsv_dir: "resources/CADDSV"
